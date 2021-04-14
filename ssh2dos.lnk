@@ -1,0 +1,7 @@
+System dos
+Name ssh2dos.exe
+Debug all
+File ssh2dos.obj
+Option map
+Library crypto.lib,misc.lib,ssh.lib,vt100.lib,zlib_l.lib,wattcpwl.lib
+Option Stack=4k

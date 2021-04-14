@@ -1,0 +1,26 @@
+v0.2.1  - Added vt340.kbd for VT340 emulation
+        - Real-mode binary should work on 8086 processors
+        - Mode switching bug is fixed in non-vesa modes
+
+v0.2.0  - Added SOCKS5 and HTTP proxy support
+        - Added keyboard-interactive authentication method
+        - Added scp support
+
+v0.1.1  - bugfix release for the 'too large packet' problem
+
+v0.1.0	- by Przemyslaw Czerpak <druzus@polbox.com>:
+	  - checking the real screen size (width and high) for VGA
+	  - corrected bug in cursor hide/show: ESC [ ? 25 h/l
+	  - added cursor shape codes ESC [ ? n c
+	  - added set / restore color palette codes ESC ] R, ESC ] P nnrrggbb
+	- New codes from linux console
+	- even more terminal fixes
+        - support for 80x60, 132x25 and 132x50 video modes (VESA required)
+        - added scrollback support
+        - code cleanup
+        - changed to OpenWatcom (DJGPP and Borland support removed)
+        - added support for Diffie-Hellman group key exchange
+        - added SCP utility
+
+v0.0.1  - First public release, based on the SSHDOS source, so it should be
+	  stable and usable. SFTP also included, thanks to PuTTY

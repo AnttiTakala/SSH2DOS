@@ -1,0 +1,6 @@
+System causeway
+Name scp2d386.exe
+Debug all
+Option map
+File scpdos.obj
+Library crypto.lib,misc.lib,ssh.lib,vt100.lib,zlib_f.lib,wattcpwf.lib

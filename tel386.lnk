@@ -1,0 +1,6 @@
+System causeway
+Name tel386.exe
+Debug all
+Option map
+File telnet.obj
+Library misc.lib,vt100.lib,wattcpwf.lib

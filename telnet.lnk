@@ -1,0 +1,6 @@
+System dos
+Name telnet.exe
+Debug all
+Option map
+File telnet.obj
+Library misc.lib,vt100.lib,wattcpwl.lib

@@ -1,0 +1,49 @@
+Copyright (c) 2000 Ken Yap
+
+ssh is a simple frontend for sshdos that gives you the config file
+functionality of the Unix ssh. This functionality could be put into
+sshdos but it would make the size of the executable larger. All that is
+really needed is a program to read in the command line flags, then parse
+a config file, make some subsitutions and finally exec sshdos.
+
+For example, say the config file ssh.cfg contains this:
+
+Host sourceforge
+	Hostname project.sourceforge.net
+	User programmer
+	Cipher blowfish
+	Term linux
+	Keymap linux.kbd
+	Mode 132x25
+
+then you can run ssh like this:
+
+	ssh sourceforge
+
+and it will call sshdos like this:
+
+	sshdos -c blowfish -t linux -k linux.kbd -m 132x25 programmer project.sourceforge.net
+
+Like the Unix ssh, it reads options in this order: command line options,
+user config file, and finally system config file. The first setting of
+an option is the one that takes effect. Wildcards are allowed for the
+Host lines, just like the Unix version.  Therefore the options should be
+arranged from the most specific to the least specific.  So in the
+previous example, we could override the cipher and user by
+
+	ssh -c 3des writer sourceforge
+
+and
+
+	sshdos -c 3des writer project.sourceforge.net
+
+is what gets executed.
+
+The disadvantage of this approach is that if sshdos gets some new
+options, then ssh has to be taught about them.
+
+(I have made provision for the code to be a frontend for scp later. :-)
+
+Ken Yap
+ken_yap@xoommail.com
+August 2000

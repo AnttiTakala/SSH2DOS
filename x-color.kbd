@@ -1,0 +1,22 @@
+# x-color.kbd -- sshdos keymap for xterm-color terminals.
+# Written by Shane Wegner <shane@cm.nu> 2001-09-13.
+# Based on the xterm-color terminfo database entry.
+# Modified by Nagy Daniel<nagyd@users.sourceforge.net> 2002-02-11.
+# Contains only differences to the original xterm keymap
+
+# key_backspace
+mapkey 0x0e08 \10
+# key_delete
+mapkey 0x53e0 \177
+# key_home
+mapkey 0x47e0 \E[1~
+# key_end
+mapkey 0x4fe0 \E[4~
+# key_f1
+mapkey 0x3b00 \E[11~
+# key_f2
+mapkey 0x3c00 \E[12~
+# key_f3
+mapkey 0x3d00 \E[13~
+# key_f4
+mapkey 0x3e00 \E[14~

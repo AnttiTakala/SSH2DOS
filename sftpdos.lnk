@@ -1,0 +1,7 @@
+System dos
+Name sftpdos.exe
+Debug all
+Option map
+File sftpdos.obj,sftp.obj
+Library crypto.lib,misc.lib,ssh.lib,vt100.lib,zlib_l.lib,wattcpwl.lib
+Option Stack=4k

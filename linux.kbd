@@ -1,0 +1,27 @@
+# linux.kbd -- sshdos keymap for linux terminals.
+# Written by Nagy Daniel <nagyd@users.sourceforge.net> 2002-02-11.
+# Based on the linux terminfo database entry.
+# Contains only differences to the original xterm keymap
+
+# key_up
+mapkey 0x48e0 \E[A
+# key_down
+mapkey 0x50e0 \E[B
+# key_right
+mapkey 0x4de0 \E[C
+# key_left
+mapkey 0x4be0 \E[D
+# key_home
+mapkey 0x47e0 \E[1~
+# key_end
+mapkey 0x4fe0 \E[4~
+# key_f1
+mapkey 0x3b00 \E[[A
+# key_f2
+mapkey 0x3c00 \E[[B
+# key_f3
+mapkey 0x3d00 \E[[C
+# key_f4
+mapkey 0x3e00 \E[[D
+# key_f5
+mapkey 0x3f00 \E[[E

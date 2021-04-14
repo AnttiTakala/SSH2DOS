@@ -1,0 +1,27 @@
+# vt100.kbd -- sshdos keymap for vt100 and vt102 terminals.
+# Written by Nagy Daniel <nagyd@users.sourceforge.net> 2002-02-11.
+# Based on the vt100 terminfo database entry.
+# Contains only differences to the original xterm keymap
+
+# key_backspace
+mapkey 0x0e08 \10
+# key_f1
+mapkey 0x3b00 \EOP
+# key_f2
+mapkey 0x3c00 \EOQ
+# key_f3
+mapkey 0x3d00 \EOR
+# key_f4
+mapkey 0x3e00 \EOS
+# key_f5
+mapkey 0x3f00 \EOt
+# key_f6
+mapkey 0x4000 \EOu
+# key_f7
+mapkey 0x4100 \EOv
+# key_f8
+mapkey 0x4200 \EOl
+# key_f9
+mapkey 0x4300 \EOw
+# key_f10
+mapkey 0x4400 \EOx
