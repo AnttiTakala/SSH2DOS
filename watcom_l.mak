@@ -41,9 +41,9 @@ telnet.exe  : telnet.obj lib\misc.lib lib\vt100.lib $(%WATT_ROOT)\lib\wattcpwl.l
 ttytest.exe : ttytest.obj $(LIBS)
 	$(LINKER) @ttytest.lnk
 
-lib\crypto.lib: sshrsa.obj sshdes.obj sshmd5.obj sshbn.obj sshpubk.obj int64.obj sshaes.obj  sshsha.obj sshsh512.obj sshdss.obj
+lib\crypto.lib: sshrsa.obj sshdes.obj sshmd5.obj sshbn.obj sshpubk.obj int64.obj sshaes.obj  sshsha.obj sshsh512.obj sshdss.obj sshsh256.obj 
 	wlib -b -c lib\crypto.lib -+sshrsa.obj -+sshdes.obj -+sshmd5.obj -+sshbn.obj -+sshpubk.obj
-	wlib -b -c lib\crypto.lib -+int64.obj -+sshaes.obj -+sshsha.obj -+sshsh512.obj -+sshdss.obj
+	wlib -b -c lib\crypto.lib -+int64.obj -+sshaes.obj -+sshsha.obj -+sshsh512.obj -+sshdss.obj -+sshsh256.obj
 
 lib\ssh.lib: negotiat.obj transprt.obj auth.obj channel.obj
 	wlib -b -c lib\ssh.lib -+negotiat.obj -+transprt.obj -+auth.obj -+channel.obj

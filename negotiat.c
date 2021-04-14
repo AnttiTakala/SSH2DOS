@@ -45,7 +45,7 @@ extern char *RemoteClosed;
 extern char *ConnectionClosed;
 
 /* global variables */
-SHA_State exhashbase;
+SHA256_State exhash256base;
 
 /*
  * SSH version string exchange: get server's SSH protocol
@@ -95,9 +95,11 @@ int i;
     * We must hash the version strings for the Diffie-Hellman
     * key exchange
     */
-   SHA_Init(&exhashbase);
-   sha_string(&exhashbase, localstr, strcspn(localstr, "\r\n"));
-   sha_string(&exhashbase, remotestr, strlen(remotestr));
+
+  SHA256_Init(&exhash256base);
+  sha256_string(&exhash256base, localstr, strcspn(localstr, "\r\n"));
+  sha256_string(&exhash256base, remotestr, strlen(remotestr));
+
    return(0);
 }
 

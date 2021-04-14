@@ -80,7 +80,6 @@ static void Config_Init(void)
    GlobalConfig.debugfile = NULL;
    GlobalConfig.brailab = NULL;
    Configuration = 0;
-   Configuration += DHGROUP;
 }
 
 /*
@@ -114,7 +113,7 @@ static short SFTP_Start(void)
    SSH_putstring("sftp");
    SSH_pkt_send();
 
-   if(SSH2_Channel_Read(NULL))
+   if(SSH2_Channel_Read(0))
 	return(1);
 
    switch(pktin.type){
@@ -1458,7 +1457,6 @@ char *s;
 	    "-p <port number>        - remote port\n"
 	    "-s <password>           - remote password\n"
 	    "-b <batch file>         - batch mode (plain text file)\n"
-	    "-g                      - use DH group1 key exchange\n"
 	    "-P                      - use non privileged local port\n"
 	    "-C                      - enable compression\n"
 	    "-d                      - save SSH packets to debug.pkt\n"
@@ -1499,10 +1497,6 @@ char *s;
 		   RemotePort = atoi(argv[i]);
 		else
 		   fatal(usage);
-		continue;
-
-	   case 'g':
-		Configuration -= DHGROUP;
 		continue;
 
 	   case 'P':
@@ -1570,6 +1564,9 @@ int main(int argc, char *argv[])
 #else
    printf("SFTPDOS v%s\n", SSH_VERSION);
 #endif
+   printf("%s\n", AUTHOR_1);
+   printf("%s\n\n", AUTHOR_2);
+      
    Config_Init();	/* Initialize global variables */
    srand(time(NULL));	/* Initialize random number generator */
 

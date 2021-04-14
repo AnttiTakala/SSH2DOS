@@ -777,8 +777,8 @@ void aes_setup(AESContext * ctx, unsigned short blocklen,
 unsigned long rconst;
 unsigned short a, b, c, d, i, j, Nk;
 
-    assert(blocklen == 16 || blocklen == 24 || blocklen == 32);
-    assert(keylen == 16 || keylen == 24 || keylen == 32);
+    assert(blocklen == 16);
+    assert(keylen == 16);
 
     /*
      * Basic parameters. Words per block, words in key, rounds.
@@ -909,6 +909,32 @@ unsigned short i;
     memcpy(ctx->iv, iv, sizeof(iv));
 }
 
+static void aes_sdctr(unsigned char *blk, unsigned long len, AESContext *ctx)
+{
+    word32 iv[4], b[4], tmp;
+    short i;
+
+    assert((len & 15) == 0);
+
+    memcpy(iv, ctx->iv, sizeof(iv));
+
+    while (len > 0) {
+    memcpy(b, iv, sizeof(b));
+    aes_encrypt(ctx, b);
+    for (i = 0; i < 4; i++) {
+        tmp = GET_32BIT_MSB_FIRST(blk + 4 * i);
+        PUT_32BIT_MSB_FIRST(blk + 4 * i, tmp ^ b[i]);
+    }
+    for (i = 3; i >= 0; i--)
+        if ((iv[i] = (iv[i] + 1) & 0xffffffff) != 0)
+        break;
+    blk += 16;
+    len -= 16;
+    }
+
+    memcpy(ctx->iv, iv, sizeof(iv));
+}
+
 static AESContext csctx, scctx;
 
 void aes128_cskey(unsigned char *key)
@@ -939,13 +965,12 @@ unsigned short i;
 
 void aes_ssh2_encrypt_blk(unsigned char *blk, unsigned long len)
 {
-
-    aes_encrypt_cbc(blk, len, &csctx);
+    aes_sdctr(blk, len, &csctx);
 }
 
 void aes_ssh2_decrypt_blk(unsigned char *blk, unsigned long len)
 {
-    aes_decrypt_cbc(blk, len, &scctx);
+    aes_sdctr(blk, len, &scctx);
 }
 
 void aes256_decrypt_pubkey(unsigned char *key, unsigned char *blk, int len)

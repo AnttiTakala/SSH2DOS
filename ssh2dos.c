@@ -100,7 +100,6 @@ static void Config_Init(void)
    GlobalConfig.debugfile = NULL;
    GlobalConfig.brailab = NULL;
    Configuration = 0;
-   Configuration += DHGROUP;
 }
 
 /*
@@ -230,7 +229,6 @@ char *s;
 	    "-l <log file>                      - log session to file\n"
 	    "-a <minutes>                       - time between keepalive packets\n"
 	    "-b <COM[1234]>                     - Brailab PC adapter on COM[1234] port\n"
-	    "-g                                 - use DH group1 key exchange\n"
 	    "-P                                 - don't allocate a privileged port\n"
 	    "-C                                 - enable compression\n"
 	    "-S                                 - disable status line\n"
@@ -370,10 +368,6 @@ char *s;
 		   fatal(usage);
 		continue;
 
-	   case 'g':
-		Configuration -= DHGROUP;
-		continue;
-
 	   case 'P':
 		Configuration += NONPRIVILEGED_PORT;
 		continue;
@@ -444,6 +438,8 @@ int main(int argc, char **argv)
 #else
    printf("SSH2DOS v%s\n", SSH_VERSION);
 #endif
+   printf("%s\n", AUTHOR_1);
+   printf("%s\n\n", AUTHOR_2);   
 
    Config_Init();	/* Initialize global variables */
    srand(time(NULL));	/* Initialize random number generator */

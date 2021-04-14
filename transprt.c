@@ -53,13 +53,13 @@ void aes_ssh2_decrypt_blk(unsigned char *, unsigned long);
 /* external data */
 extern Config GlobalConfig;		/* global configuration structure */
 extern unsigned short Configuration;	/* Configuration bits */
-extern SHA_State exhashbase;
+extern SHA256_State exhash256base;
 extern Bignum One;
 
 /* global data */
 Packet pktin = { 0, 0, 0, NULL, NULL, NULL };/* incoming SSH2 packet */
 Packet pktout = { 0, 0, 0, NULL, NULL, NULL };/* outgoing SSH2 packet */
-unsigned char ssh2_session_id[20];		/* Session identifier */
+unsigned char ssh2_session_id[32];		/* Session identifier */
 char *RemoteClosed = "Remote host closed connection";
 char *ConnectionClosed = "Connection closed";
 char *protocolerror = "Protocol error";
@@ -71,13 +71,13 @@ static unsigned long incoming_sequence;	/* incoming packet number */
 static unsigned long outgoing_sequence;	/* outgoing packet number */
 static unsigned short MACLength;	/* MAC length */
 static unsigned short first_kex;	/* First key exchange? */
-static SHA_State exhash;		     /* SHA hash after string excange */
+static SHA256_State exhash256;    /* SHA hash after string excange */
 
 static z_stream comp;			     /* compression stream */
 static z_stream decomp;			     /* decompression stream */
 
 /* The prime p used in the DH key exchange. */
-static unsigned char P[] = {
+static unsigned char P1[] = {
     0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xC9, 0x0F, 0xDA, 0xA2,
     0x21, 0x68, 0xC2, 0x34, 0xC4, 0xC6, 0x62, 0x8B, 0x80, 0xDC, 0x1C, 0xD1,
     0x29, 0x02, 0x4E, 0x08, 0x8A, 0x67, 0xCC, 0x74, 0x02, 0x0B, 0xBE, 0xA6,
@@ -89,6 +89,31 @@ static unsigned char P[] = {
     0xEE, 0x38, 0x6B, 0xFB, 0x5A, 0x89, 0x9F, 0xA5, 0xAE, 0x9F, 0x24, 0x11,
     0x7C, 0x4B, 0x1F, 0xE6, 0x49, 0x28, 0x66, 0x51, 0xEC, 0xE6, 0x53, 0x81,
     0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF
+};
+
+static unsigned char P14[] = {
+    0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xC9, 0x0F, 0xDA, 0xA2,
+    0x21, 0x68, 0xC2, 0x34, 0xC4, 0xC6, 0x62, 0x8B, 0x80, 0xDC, 0x1C, 0xD1,
+    0x29, 0x02, 0x4E, 0x08, 0x8A, 0x67, 0xCC, 0x74, 0x02, 0x0B, 0xBE, 0xA6,
+    0x3B, 0x13, 0x9B, 0x22, 0x51, 0x4A, 0x08, 0x79, 0x8E, 0x34, 0x04, 0xDD,
+    0xEF, 0x95, 0x19, 0xB3, 0xCD, 0x3A, 0x43, 0x1B, 0x30, 0x2B, 0x0A, 0x6D,
+    0xF2, 0x5F, 0x14, 0x37, 0x4F, 0xE1, 0x35, 0x6D, 0x6D, 0x51, 0xC2, 0x45,
+    0xE4, 0x85, 0xB5, 0x76, 0x62, 0x5E, 0x7E, 0xC6, 0xF4, 0x4C, 0x42, 0xE9,
+    0xA6, 0x37, 0xED, 0x6B, 0x0B, 0xFF, 0x5C, 0xB6, 0xF4, 0x06, 0xB7, 0xED,
+    0xEE, 0x38, 0x6B, 0xFB, 0x5A, 0x89, 0x9F, 0xA5, 0xAE, 0x9F, 0x24, 0x11,
+    0x7C, 0x4B, 0x1F, 0xE6, 0x49, 0x28, 0x66, 0x51, 0xEC, 0xE4, 0x5B, 0x3D,
+    0xC2, 0x00, 0x7C, 0xB8, 0xA1, 0x63, 0xBF, 0x05, 0x98, 0xDA, 0x48, 0x36,
+    0x1C, 0x55, 0xD3, 0x9A, 0x69, 0x16, 0x3F, 0xA8, 0xFD, 0x24, 0xCF, 0x5F,
+    0x83, 0x65, 0x5D, 0x23, 0xDC, 0xA3, 0xAD, 0x96, 0x1C, 0x62, 0xF3, 0x56,
+    0x20, 0x85, 0x52, 0xBB, 0x9E, 0xD5, 0x29, 0x07, 0x70, 0x96, 0x96, 0x6D,
+    0x67, 0x0C, 0x35, 0x4E, 0x4A, 0xBC, 0x98, 0x04, 0xF1, 0x74, 0x6C, 0x08,
+    0xCA, 0x18, 0x21, 0x7C, 0x32, 0x90, 0x5E, 0x46, 0x2E, 0x36, 0xCE, 0x3B,
+    0xE3, 0x9E, 0x77, 0x2C, 0x18, 0x0E, 0x86, 0x03, 0x9B, 0x27, 0x83, 0xA2,
+    0xEC, 0x07, 0xA2, 0x8F, 0xB5, 0xC5, 0x5D, 0xF0, 0x6F, 0x4C, 0x52, 0xC9,
+    0xDE, 0x2B, 0xCB, 0xF6, 0x95, 0x58, 0x17, 0x18, 0x39, 0x95, 0x49, 0x7C,
+    0xEA, 0x95, 0x6A, 0xE5, 0x15, 0xD2, 0x26, 0x18, 0x98, 0xFA, 0x05, 0x10,
+    0x15, 0x72, 0x8E, 0x5A, 0x8A, 0xAC, 0xAA, 0x68, 0xFF, 0xFF, 0xFF, 0xFF,
+    0xFF, 0xFF, 0xFF, 0xFF
 };
 
 static Bignum x, p, q, qmask, g;     /* Variables for Diffie-Hellaman */
@@ -156,15 +181,6 @@ static void dh_init(void)
    qmask = bignum_bitmask(q);
 }
 
-
-static void sha_uint32(SHA_State * s, unsigned long i)
-{
-    unsigned char intblk[4];
-    PUT_32BIT_MSB_FIRST(intblk, i);
-    SHA_Bytes(s, intblk, 4);
-}
-
-
 /*
  * Initialise DH for the standard group1.
  */
@@ -172,11 +188,19 @@ static void dh_setup_group1(void)
 {
 unsigned char G[] = { 2 };
 
-   p = bignum_from_bytes(P, sizeof(P));
+   p = bignum_from_bytes(P1, sizeof(P1));
    g = bignum_from_bytes(G, sizeof(G));
    dh_init();
 }
 
+static void dh_setup_group14(void)
+{
+unsigned char G[] = { 2 };
+
+   p = bignum_from_bytes(P14, sizeof(P14));
+   g = bignum_from_bytes(G, sizeof(G));
+   dh_init();
+}
 
 /*
  * Initialise DH for an alternative group.
@@ -282,21 +306,21 @@ Bignum ret;
 static void ssh2_mkkey(Bignum K, char *H, char *sessid, char chr,
 		       char *keyspace)
 {
-SHA_State s;
+  SHA256_State s;
 
-    /* First 20 bytes. */
-    SHA_Init(&s);
-    sha_mpint(&s, K);
-    SHA_Bytes(&s, H, 20);
-    SHA_Bytes(&s, &chr, 1);
-    SHA_Bytes(&s, sessid, 20);
-    SHA_Final(&s, keyspace);
-    /* Next 20 bytes. */
-    SHA_Init(&s);
-    sha_mpint(&s, K);
-    SHA_Bytes(&s, H, 20);
-    SHA_Bytes(&s, keyspace, 20);
-    SHA_Final(&s, keyspace + 20);
+    /* First 32 bytes. */
+    SHA256_Init(&s);
+    sha256_mpint(&s, K);
+    SHA256_Bytes(&s, H, 32);
+    SHA256_Bytes(&s, &chr, 1);
+    SHA256_Bytes(&s, sessid, 32);
+    SHA256_Final(&s, keyspace);
+    /* Next 32 bytes. */
+    SHA256_Init(&s);
+    sha256_mpint(&s, K);
+    SHA256_Bytes(&s, H, 32);
+    SHA256_Bytes(&s, keyspace, 32);
+    SHA256_Final(&s, keyspace + 32);
 }
 
 /*
@@ -314,15 +338,12 @@ unsigned char cookie[16];
 
    SSH_pkt_init(SSH_MSG_KEXINIT);
    SSH_putdata(cookie, 16); 
-   if(Configuration & DHGROUP)
-      SSH_putstring("diffie-hellman-group-exchange-sha1"); 
-   else
-      SSH_putstring("diffie-hellman-group1-sha1"); 
-   SSH_putstring("ssh-dss");
-   SSH_putstring("aes128-cbc"); 
-   SSH_putstring("aes128-cbc"); 
-   SSH_putstring("hmac-sha1"); 
-   SSH_putstring("hmac-sha1"); 
+   SSH_putstring("diffie-hellman-group14-sha256");
+   SSH_putstring("ssh-rsa");
+   SSH_putstring("aes128-ctr"); 
+   SSH_putstring("aes128-ctr"); 
+   SSH_putstring("hmac-sha2-256"); 
+   SSH_putstring("hmac-sha2-256"); 
    if(Configuration & COMPRESSION_REQUESTED){
         SSH_putstring("zlib,none"); 
         SSH_putstring("zlib,none"); 
@@ -337,11 +358,11 @@ unsigned char cookie[16];
    SSH_putuint32(0); 
 
    /* Mix this to the Diffie-Hellman key exchange */
-   exhash = exhashbase;
-   sha_string(&exhash, pktout.body, pktout.length);
+   exhash256 = exhash256base;
+   sha256_string(&exhash256, pktout.body, pktout.length);
 
    /* Mix host packet to the Diffie-Hellman key exchange */
-   sha_string(&exhash, pktin.body, pktin.length);
+   sha256_string(&exhash256, pktin.body, pktin.length);
 
    if(Configuration & VERBOSE_MODE)
         puts("Sending our key exchange packet");
@@ -359,44 +380,26 @@ static short SSH2_DHExchange(void)
 Bignum e, f, K;
 char *hostkeydata;
 unsigned long hostkeylen;
-unsigned char keyspace[40];
-unsigned char exchange_hash[20];
+unsigned char keyspace[64];
+unsigned char exchange_hash[32];
 int kexinit, kexreply;
 
    /* Initiate our key exchange */
    SSH2_KexInit();
 
-   if(Configuration & DHGROUP){
-      SSH_pkt_init(SSH_MSG_KEX_DH_GEX_REQUEST);
-      SSH_putuint32(1024);
-      if((Configuration & VERBOSE_MODE) && first_kex)
-         puts("Diffie-Hellman group key exchange");
-      SSH_pkt_send();
-      if(SSH_pkt_read(NULL))
-         return(1);
-      if(pktin.type != SSH_MSG_KEX_DH_GEX_GROUP){
-	 SSH_Disconnect(SSH_DISCONNECT_KEY_EXCHANGE_FAILED, "Expected KEX_DH_GEX_GROUP");
-	 return(1);
-      }
-      p = SSH_getmp();
-      g = SSH_getmp();
-      dh_setup_group(p, g);
-      kexinit = SSH_MSG_KEX_DH_GEX_INIT;
-      kexreply = SSH_MSG_KEX_DH_GEX_REPLY;
-   } else {
       if((Configuration & VERBOSE_MODE) && first_kex)
          puts("Diffie-Hellman key exchange");
-      dh_setup_group1();
+      dh_setup_group14();
       kexinit = SSH_MSG_KEXDH_INIT;
       kexreply = SSH_MSG_KEXDH_REPLY;
-   }
+
    e = dh_create_e(128 * 2);
 
    SSH_pkt_init(kexinit);
    SSH_putmp(e);
    SSH_pkt_send();
 
-   if(SSH_pkt_read(NULL))
+   if(SSH_pkt_read(0))
         return(1);
    if(pktin.type != kexreply){
 	SSH_Disconnect(SSH_DISCONNECT_KEY_EXCHANGE_FAILED, "Expected kex reply");
@@ -407,16 +410,12 @@ int kexinit, kexreply;
    f = SSH_getmp();
    K = dh_find_K(f);
 
-   sha_string(&exhash, hostkeydata, hostkeylen);
-   if(Configuration & DHGROUP){
-      sha_uint32(&exhash, 1024);
-      sha_mpint(&exhash, p);
-      sha_mpint(&exhash, g);
-   }
-   sha_mpint(&exhash, e);
-   sha_mpint(&exhash, f);
-   sha_mpint(&exhash, K);
-   SHA_Final(&exhash, exchange_hash);
+   sha256_string(&exhash256, hostkeydata, hostkeylen);
+   sha256_mpint(&exhash256, e);
+   sha256_mpint(&exhash256, f);
+   sha256_mpint(&exhash256, K);
+   SHA256_Final(&exhash256, exchange_hash);
+
 
    dh_cleanup();
    freebn(e);
@@ -453,9 +452,9 @@ int kexinit, kexreply;
    ssh2_mkkey(K, exchange_hash, ssh2_session_id, 'D', keyspace);
    aes128_sckey(keyspace);
    ssh2_mkkey(K, exchange_hash, ssh2_session_id, 'E', keyspace);
-   sha1_cskey(keyspace);
+   sha256_cskey(keyspace);
    ssh2_mkkey(K, exchange_hash, ssh2_session_id, 'F', keyspace);
-   sha1_sckey(keyspace);
+   sha256_sckey(keyspace);
    freebn(K);
 
    return(0);
@@ -685,7 +684,7 @@ unsigned long complen;
    pktout.whole[4] = PadLength;
 
    if(MACLength)
-	sha1_generate(pktout.whole, PktLength, outgoing_sequence);
+    sha256_generate(pktout.whole, PktLength, outgoing_sequence);
    outgoing_sequence++;	       /* whether or not we MACed */
 
    PktLength += MACLength;
@@ -744,7 +743,7 @@ unsigned char *decompblk;	/* buffer for decompression */
 	aes_ssh2_decrypt_blk(inbuf + 16, PktLength - 16 - MACLength);
 
    if(MACLength) /* verify MAC if present */
-        if(!sha1_verify(inbuf, len + 4, incoming_sequence)){
+        if(!sha256_verify(inbuf, len + 4, incoming_sequence)){
            SSH_Disconnect(SSH_DISCONNECT_MAC_ERROR, "Incorrect MAC received");
 	   free(inbuf);
            return(1);
@@ -830,7 +829,7 @@ restart:
 		return(1);
 	   }
 	   first_kex = 0;
-           MACLength = 20;
+           MACLength = 32;
 	   type = SSH_MSG_NEWKEYS; /* this should be the last MSG from host */
            break;
 

@@ -29,7 +29,6 @@ typedef struct {
 #define CONVERT_LOWERCASE	512
 #define BIOS			1024
 #define SFTP_CONNECTED		2048
-#define DHGROUP			4096
-#define NOVESA			8192
+#define NOVESA			4096
 
 #endif

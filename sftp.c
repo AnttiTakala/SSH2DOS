@@ -249,7 +249,7 @@ restart:
 	return len;
     } else { /* we must wait for more input from the SSH layer */
 	if(SSH2_Channel_Read(SSH_MSG_CHANNEL_DATA))
-	   return NULL;
+	   return 0;
 	pktin.length -= 9;
 	pendlen += pktin.length;
 	if((pendbuf = (pendbuf ? realloc(pendbuf, pendlen) :

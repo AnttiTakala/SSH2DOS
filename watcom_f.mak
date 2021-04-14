@@ -15,7 +15,7 @@ COLOR = -DCOLOR
 CC = wcc386
 LINKER = wlink LibPath lib;$(%WATT_ROOT)\lib
 
-CFLAGS = -zq -mf -3r -s $(DEBUG) -i=$(%WATCOM)\h;.\include;$(%WATT_ROOT)\inc $(COLOR)
+CFLAGS = -zq -mf -3r -bt=dos -s $(DEBUG) -i=$(%WATCOM)\h;.\include;$(%WATT_ROOT)\inc $(COLOR)
 # -DMEMWATCH
 
 .C.OBJ:	
@@ -37,9 +37,9 @@ scp2d386.exe : scpdos.obj $(LIBS)
 tel386.exe   : telnet.obj lib\misc.lib lib\vt100.lib $(%WATT_ROOT)\lib\wattcpwf.lib
 	$(LINKER) @tel386.lnk
 
-lib\crypto.lib: sshrsa.obj sshdes.obj sshmd5.obj sshbn.obj sshpubk.obj int64.obj sshaes.obj  sshsha.obj sshsh512.obj sshdss.obj
+lib\crypto.lib: sshrsa.obj sshdes.obj sshmd5.obj sshbn.obj sshpubk.obj int64.obj sshaes.obj  sshsha.obj sshsh512.obj sshdss.obj sshsh256.obj
 	wlib -b -c lib\crypto.lib -+sshrsa.obj -+sshdes.obj -+sshmd5.obj -+sshbn.obj -+sshpubk.obj
-	wlib -b -c lib\crypto.lib -+int64.obj -+sshaes.obj -+sshsha.obj -+sshsh512.obj -+sshdss.obj
+	wlib -b -c lib\crypto.lib -+int64.obj -+sshaes.obj -+sshsha.obj -+sshsh512.obj -+sshdss.obj -+sshsh256.obj
 
 lib\ssh.lib: negotiat.obj transprt.obj auth.obj channel.obj
 	wlib -b -c lib\ssh.lib -+negotiat.obj -+transprt.obj -+auth.obj -+channel.obj

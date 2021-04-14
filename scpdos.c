@@ -205,7 +205,6 @@ static void Config_Init(void)
    SendPacket = SSH2_Channel_Send;
    GlobalConfig.debugfile = NULL;
    Configuration = 0;
-   Configuration += DHGROUP;
 }
 
 /*
@@ -249,7 +248,6 @@ struct find_t ffblk;
 	    "-C                     - enable compression\n"
 	    "-P <port>              - remote port number\n"
 	    "-s                     - remote password\n"
-	    "-g                     - use DH group1 key exchange\n"
 	    "-d                     - save SSH packets to debug.pkt"
             ;
    for (i = 1; i < argc; ++i){
@@ -302,10 +300,6 @@ struct find_t ffblk;
 
 	   case 'C':
 		Configuration |= COMPRESSION_REQUESTED;
-		continue;
-
-	   case 'g':
-		Configuration -= DHGROUP;
 		continue;
 
 	   case 'P':
@@ -904,6 +898,9 @@ int main(int argc, char **argv)
 #else
    printf("SCP2DOS v%s\n", SSH_VERSION);
 #endif
+   printf("%s\n", AUTHOR_1);
+   printf("%s\n\n", AUTHOR_2);
+   
    Config_Init();	/* Initialize global variables */
    srand(time(NULL));	/* Initialize random number generator */
 

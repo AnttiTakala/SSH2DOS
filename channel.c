@@ -62,7 +62,7 @@ char *str;
 unsigned long len;
 
 restart:
-   if(SSH_pkt_read(NULL)) /* Get packet from transport layer */
+   if(SSH_pkt_read(0)) /* Get packet from transport layer */
 	return(1);
 
    switch(pktin.type){
@@ -169,7 +169,7 @@ unsigned long len;
    SSH_putuint32(MAX_PACKET_SIZE);	/* max packet size */
    SSH_pkt_send();
 
-   if(SSH2_Channel_Read(NULL))
+   if(SSH2_Channel_Read(0))
 	return(1);
 
    switch(pktin.type){

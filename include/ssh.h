@@ -18,11 +18,11 @@
 #define SSH_MSG_NEWKEYS			  21
 #define SSH_MSG_KEXDH_INIT		  30
 #define SSH_MSG_KEXDH_REPLY		  31
-#define SSH_MSG_KEX_DH_GEX_REQUEST        30
+#define SSH_MSG_KEX_DH_GEX_REQUEST_OLD    30
 #define SSH_MSG_KEX_DH_GEX_GROUP          31
 #define SSH_MSG_KEX_DH_GEX_INIT           32
 #define SSH_MSG_KEX_DH_GEX_REPLY          33
-
+#define SSH_MSG_KEX_DH_GEX_REQUEST        34
 
 #define SSH_MSG_USERAUTH_REQUEST          50
 #define SSH_MSG_USERAUTH_FAILURE          51

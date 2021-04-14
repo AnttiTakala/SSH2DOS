@@ -40,7 +40,7 @@
 /* external functions, data */
 extern Packet pktin;		/* incoming SSH2 packet */
 extern Packet pktout;		/* outgoing SSH2 packet */
-extern unsigned char ssh2_session_id[20]; /* session ID */
+extern unsigned char ssh2_session_id[32]; /* session ID */
 extern Config GlobalConfig;		/* configuration variables */
 extern unsigned short Configuration;	/* configuration bitfields */
 extern struct ssh2_userkey ssh2_wrong_passphrase;
@@ -164,7 +164,7 @@ struct ssh2_userkey *key;
    SSH_putdata(pkblob, pkblob_len);
    SSH_pkt_send();
 
-   if(SSH2_Auth_Read(NULL))
+   if(SSH2_Auth_Read(0))
 	return(1);
 
    switch(pktin.type){
@@ -198,11 +198,11 @@ struct ssh2_userkey *key;
     * outgoing packet.
     */
 
-   sigdata_len = pktout.length + 4 + 20;
+   sigdata_len = pktout.length + 4 + 32;
    if((sigdata = (unsigned char *)malloc(sigdata_len)) == NULL)
       fatal("Memory allocation error. %s: %d", __FILE__, __LINE__);
-   PUT_32BIT_MSB_FIRST(sigdata, 20);
-   memcpy(sigdata + 4, ssh2_session_id, 20);
+   PUT_32BIT_MSB_FIRST(sigdata, 32);
+   memcpy(sigdata + 4, ssh2_session_id, 32);
    memcpy(sigdata + 24, pktout.body, pktout.length);
    sigblob = key->alg->sign(key->data, sigdata, sigdata_len, &sigblob_len);
    SSH_putuint32(sigblob_len);
@@ -248,7 +248,7 @@ nextpass:
    SendIgnores();
 
 restart:
-   if(SSH2_Auth_Read(NULL))
+   if(SSH2_Auth_Read(0))
 	return(1);
 
    switch(pktin.type) {
@@ -304,7 +304,7 @@ nextkbd:
    SSH_pkt_send();
 
 restartkbd:
-   if(SSH2_Auth_Read(NULL))
+   if(SSH2_Auth_Read(0))
 	return(1);
 
    switch(pktin.type) {
@@ -384,7 +384,7 @@ char *str;
 unsigned long len;
 
 restart:
-   if(SSH_pkt_read(NULL)) /* Get packet from transport layer */
+   if(SSH_pkt_read(0)) /* Get packet from transport layer */
 	return(1);
 
    switch(pktin.type){
