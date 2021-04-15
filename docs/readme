@@ -1,4 +1,4 @@
-SSH2DOS v0.2.1-SHA256.1 patch by Antti Takala
+SSH2DOS v0.2.1+SHA256.1 patch by Antti Takala
 https://github.com/AnttiTakala/SSH2DOS
 Released on 04-14-2021
 
@@ -16,6 +16,10 @@ latest version was not used because this version was the last one
 compatible with the originally copied parts from earlier putty version.
 
 Only tested the ssh and scp clients with password based authentication.
+
+Note that the random number generator used in the program is not
+cryptographically secure at all. There may also be other security issues
+so USE AT YOUR OWN RISK.
 
 
 Original readme follows:

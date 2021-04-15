@@ -1,3 +1,10 @@
+v0.2.1+SHA256.1  - removed diffie-hellman-group1-sha1
+                 - added diffie-hellman-group14-sha256
+                 - removed aes128-cbc
+                 - added aes128-ctr
+                 - removed hmac-sha1
+                 - added hmac-sha2-256
+
 v0.2.1  - Added vt340.kbd for VT340 emulation
         - Real-mode binary should work on 8086 processors
         - Mode switching bug is fixed in non-vesa modes
